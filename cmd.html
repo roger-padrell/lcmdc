@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controlling - .</title>
+</head>
+<body>
+    <div id="response"></div>
+    >> <input id="input" placeholder="Write here your command...">
+</body>
+<style>
+    body{
+        background: black;
+        color: white;
+        font-family: monospace;
+    }
+    #input{
+        all:unset;
+        background: black;
+        color: white;
+    }
+</style>
+<script>
+    let div = document.getElementById("response");
+    async function sendCommand(command){
+        const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+            const raw = command;
+
+            const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+            };
+
+            const response = await fetch("http://" + window.ip + ":8080", requestOptions);
+            const result = await response.text();   
+            return result;     
+    }
+    async function handleInput(e){
+        if(e.key == "Enter"){
+            let out = await sendCommand(document.getElementById("input").value);
+            div.innerHTML += "<br>>> " + document.getElementById("input").value;
+            div.innerHTML += "<br>" + out;
+            document.getElementById("input").value = "";
+        }
+    }
+    window.onload = function(){
+        window.ip = window.location.href.split("?")[1];
+        document.title = "Controlling - " + ip;
+        document.getElementById("input").onkeyup = handleInput;
+    }
+</script>
+</html>
