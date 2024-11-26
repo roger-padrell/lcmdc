@@ -56,9 +56,6 @@
             div.innerHTML += "<br>>> " + document.getElementById("input").value;
             if(JSON.parse(out).returncode == 0){
                 div.innerHTML += "<br><p>" + JSON.parse(out).stdout +"</p>";
-                if(JSON.parse(out).stdout=="" && JSON.parse(out).stderr==""){
-                    window.location.href = "./index.html";
-                }
             }
             else{
                 div.innerHTML += "<br><red>" + JSON.parse(out).stderr +"</red>";
