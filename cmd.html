@@ -19,32 +19,53 @@
         all:unset;
         background: black;
         color: white;
+        width: 90%;
+    }
+    red{
+        color: red;
     }
 </style>
 <script>
     let div = document.getElementById("response");
     async function sendCommand(command){
         const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+        myHeaders.append("Content-Type", "application/json");
 
-            const raw = command;
+        const raw = JSON.stringify({
+            "command": command
+        });
 
-            const requestOptions = {
+        const requestOptions = {
             method: "POST",
             headers: myHeaders,
             body: raw,
-            redirect: "follow"
-            };
-
-            const response = await fetch("http://" + window.ip + ":8080", requestOptions);
-            const result = await response.text();   
-            return result;     
+            redirect: "follow",
+        };
+        try{
+        const response = await fetch(window.ip + "/cmd", requestOptions);
+        const result = await response.text();
+        return result;
+        }
+        catch(e){
+            return '{"returncode":1, "stderr":"This computer does not exist or it doesn\'t has it\'s server online."}';
+        }
     }
     async function handleInput(e){
         if(e.key == "Enter"){
             let out = await sendCommand(document.getElementById("input").value);
             div.innerHTML += "<br>>> " + document.getElementById("input").value;
-            div.innerHTML += "<br>" + out;
+            if(JSON.parse(out).returncode == 0){
+                div.innerHTML += "<br><p>" + JSON.parse(out).stdout +"</p>";
+                if(JSON.parse(out).stdout=="" && JSON.parse(out).stderr==""){
+                    window.location.href = "./index.html";
+                }
+            }
+            else{
+                div.innerHTML += "<br><red>" + JSON.parse(out).stderr +"</red>";
+            }
+            if(JSON.parse(out).stdout=="\f"){
+                div.innerHTML="";
+            }
             document.getElementById("input").value = "";
         }
     }
